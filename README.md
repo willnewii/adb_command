@@ -1,12 +1,12 @@
-根据🍭 ADB Usage Complete / ADB 用法大全](https://github.com/mzlogin/awesome-adb)这篇文章,把一些常用的命令做了封装.
+根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.
 
 ### 功能
 - 查看设备信息
 - 查看包列表
 - 查看apk信息(支持模糊查询)
-- 查看ip信息
+- 查看ip
 - 截图(截屏,上传文件,删除)
-- 截屏(同上)
+- 截屏(录屏,上传文件,删除)
 
 ### 资料
 - [🍭 ADB Usage Complete / ADB 用法大全](https://github.com/mzlogin/awesome-adb)
