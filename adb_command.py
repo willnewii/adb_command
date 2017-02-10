@@ -1,8 +1,9 @@
-# -*- conding:uft-8 -*-
+# encoding: UTF-8
 import os
 import sys
 import subprocess
 import time
+import re           #正则表达式
 
 ads = 'adb shell '
 
@@ -70,6 +71,13 @@ def apkInfo(package):
             num = int(input("请选择你要查询应用:"))
             os.system("adb shell dumpsys package " + packages[num])
 
+def apkUtil(package):
+    print('apkUtil')
+    #基本信息:版本,安装时间
+    #adb shell dumpsys package com.qianyilc.platform | grep -n 'version\|firstInstallTime'
+    #停止应用
+    #adb shell am force-stop package
+
 #输出帮助信息
 def printHelp():
     print('方法列表:')
@@ -82,11 +90,17 @@ def printHelp():
     print('v 0.0.1 2016-12-19 16:04:44')
 
 def test():
+    result = _command('adb shell dumpsys package com.qianyilc.platform')
+    print(result)
+    match = re.findall('MAIN:.*:',result,flags=re.DOTALL+re.MULTILINE)
+    print(match)
+'''
     print (time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime()))
-'''    os.system(ads + 'input keyevent 64')
+    os.system(ads + 'input keyevent 64')
     os.system(ads + 'input keyevent 99')
     os.system(ads + 'input text aaaa')
 '''
+
 if len(sys.argv) ==1:
     deviceInfo()
 elif sys.argv[1]=='info':
