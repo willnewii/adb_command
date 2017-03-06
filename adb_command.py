@@ -71,6 +71,10 @@ def apkInfo(package):
             num = int(input("请选择你要查询应用:"))
             os.system("adb shell dumpsys package " + packages[num])
 
+def inputtext(text):
+    os.system("adb shell input text " + text)
+
+
 def apkUtil(package):
     print('apkUtil')
     #基本信息:版本,安装时间
@@ -84,10 +88,11 @@ def printHelp():
     print('info             ·········  获取设备信息')
     print('apkinfo          ·········  获取指定包名的apk信息 支持模糊查询')
     print('ip               ·········  获取ip信息')
+    print('text             ·········  将内容输入到edittext')
     print('packages         ·········  获取安装包列表 可跟关键字. eg:packages weibo')
     print('cap              ·········  截取当前屏幕,保存在当前目录,然后删除手机中的截图文件')
     print('screenrecord     ·········  录制当前屏幕,保存在当前目录,然后删除手机中的录屏文件')
-    print('v 0.0.1 2016-12-19 16:04:44')
+    print('v 0.0.2 2017年03月06日16:55:36')
 
 def test():
     result = _command('adb shell dumpsys package com.qianyilc.platform')
@@ -123,7 +128,11 @@ elif sys.argv[1]=='apkinfo':
         apkInfo('')
     else:
         apkInfo(sys.argv[2])
-
+elif sys.argv[1]=='text':
+    if len(sys.argv) ==2:
+        inputtext('')
+    else:
+        inputtext(sys.argv[2])
 elif sys.argv[1]=='test':
     test()
 else:
