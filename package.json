@@ -1,0 +1,24 @@
+{
+  "name": "adb_command",
+  "version": "1.0.0",
+  "description": "根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.",
+  "main": "adb_command.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willnewii/adb_command.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/willnewii/adb_command/issues"
+  },
+  "homepage": "https://github.com/willnewii/adb_command#readme",
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "commander": "^2.9.0"
+  }
+}

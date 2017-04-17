@@ -14,6 +14,13 @@ python3 you-path/adb_command.py
 - 截图(截屏,上传文件,删除)
 - 截屏(录屏,上传文件,删除)
 
+### 其他命令
+```
+//查看当前Activity
+adb shell dumpsys activity activities | grep mFocusedActivity
+
+```
+
 ### 参考链接
 - [🍭 ADB Usage Complete / ADB 用法大全](https://github.com/mzlogin/awesome-adb)
 - [sed & awk & grep 专题( 鸟哥 )](http://www.cnblogs.com/moveofgod/p/3540575.html)
