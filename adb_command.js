@@ -3,8 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 
-require('./base');
-
 const co = require('co')
 const prompt = require('co-prompt')
 
@@ -12,6 +10,7 @@ const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 const execSync = require('child_process').execSync
 
+require('./base');
 let YELLOW = '\x1b[33m'
 let BLUE = '\x1b[34m'
 let END = '\x1b[0m'
@@ -26,6 +25,21 @@ const run_command = function (command) {
     let result = execSync(command);
     return result.toString().trim();
     //let rs = result.toString().replace('\r\n', '');
+}
+
+const run_commandA = function (command, callback) {
+    let child = exec(command, function (error, stdout, stderr) {
+        // console.log(error, stdout, stderr);
+        if (!error) {
+            if (callback)
+                callback();
+        }
+    });
+    child.on('exit', function (code) {
+        if (code != 0) {
+            console.log('Failed: ' + code);
+        }
+    });
 }
 
 const print_deviceinfo = function () {
@@ -76,25 +90,19 @@ const select_packages = function (packagename, tip, callback) {
 }
 
 const print_packages = function (packagename) {
-    select_packages(packagename, '请选择你要查看的应用编号:', (name) => {
+    select_packages(packagename, '请选择要查看的应用编号:', (name) => {
         doPpackageInfo(name);
     })
 }
 
 const doPpackageInfo = function (packagename) {
+    console.log(packagename);
     //console.log(run_as(`dumpsys package ${packagename} `));
     console.log(run_as(`dumpsys package ${packagename} | grep -n 'version\\|firstInstallTime'`));
 }
 
-const screencap = function () {
-    let filename = new Date().format("yyyy_MM_dd_hh_mm_ss") + '.png';
-    run_as('screencap -p /sdcard/' + filename);
-    run_command('adb pull /sdcard/' + filename);
-    run_command('adb rm /sdcard/' + filename);
-}
-
 const cleanApk = function (packagename) {
-    select_packages(packagename, '请选择你要清除数据的应用编号:', (name) => {
+    select_packages(packagename, '请选择要清除数据的应用编号:', (name) => {
         doCleanApk(name);
     })
 }
@@ -109,13 +117,24 @@ const doCleanApk = function (packagename) {
     })
 }
 
+const stopApk = function (packagename) {
+    select_packages(packagename, '请选择要停止的应用编号:', (name) => {
+        doStopApk(name);
+    })
+}
+
+const doStopApk = function (packagename) {
+    run_as('am force-stop ' + packagename);
+}
+
 const print_Log = function (tag) {
-    fs.appendFile('log.txt', '##### 记录日志:' + new Date().format("yyyy-MM-dd hh:mm:ss") + '\n');
+    let filename = 'log/' + new Date().format("yyyy-MM-dd-hh") + '.txt'
+    fs.appendFile(filename, '##### 记录日志:' + new Date().format("yyyy-MM-dd hh:mm:ss") + '\n');
 
     let log = spawn('adb', ['logcat', `${tag}:v`, '*:S']);
     log.stdout.on('data', function (data) {
         console.log(data.toString());
-        fs.appendFile('log.txt', data.toString());
+        fs.appendFile(filename, data.toString());
     });
     // 添加一个end监听器来关闭文件流
     log.stdout.on('end', function (data) {
@@ -123,40 +142,62 @@ const print_Log = function (tag) {
     });
 }
 
-const setInput = function (content) {
-    run_as('input text ' + content);
-    /*    co(function *() {
-     let content = yield prompt.multiline('请输入你要填写的内容:')
-     if (content) {
-     console.log(content);
-     run_as('input text ' + content);
-     }
-     })*/
-}
+const screencap = function () {
+    let filename = new Date().format("yyyy_MM_dd_hh_mm_ss") + '.png';
 
-const getInput = function (callback) {
-    process.stdin.setEncoding('utf8');
-    //process.stdin.resume();
-    process.stdin.on('data', (data) => {
-        if (data !== null) {
-            if (callback) {
-                callback(data);
-            }
-        }
-        process.stdin.pause();
+    run_commandA(AS + 'screencap -p /sdcard/' + filename, () => {
+        run_commandA('adb pull /sdcard/' + filename + ' record/', () => {
+            run_commandA('adb shell rm /sdcard/' + filename, () => {
+            });
+        });
     });
 }
 
-//console.log(program);
+const screenrecord = function () {
+    console.log(process.platform);
+
+    console.log('屏幕录制中...需要停止时按ctrl+c');
+    let filename = new Date().format("yyyy_MM_dd_hh_mm_ss") + '.mp4';
+    let log = spawn('adb', ['shell', 'screenrecord', '/sdcard/' + filename]);
+    co(function *() {
+        let conf = yield prompt.confirm('停止录制?(y/n)')
+        if (conf) {
+            log.kill();
+            setTimeout(() => {
+                run_commandA('adb pull /sdcard/' + filename + ' record/', () => {
+                    run_commandA('adb shell rm /sdcard/' + filename, () => {
+                    });
+                });
+            }, 1000);
+        }
+        process.stdin.pause();
+    })
+}
+
+const setInput = function (content) {
+    run_as('input text ' + content);
+}
+
+const _mkdir = function (dir) {
+    fs.exists(dir, function (exists) {
+        !exists && fs.mkdir(dir);
+    });
+}
+
+_mkdir('log');
+_mkdir('record');
+
 
 program
     .version(require('./package.json').version)
     .option('-i, --info', '显示设备信息', print_deviceinfo)
-    .option('-l, --log [tag]', '打印log', print_Log)
-    .option('-p, --package [package]', '查看apk信息 [包名]', print_packages)
-    .option('--clean [package]', '双清(缓存/数据)应用 [包名]', cleanApk)
-    .option('--input [content]', '将内容输入到edittext(不支持中文)', setInput)
-    .option('-c --cap', '截屏并保存的电脑(当前目录)', screencap)
+    .option('-l, --log <tag>', '打印log(log/) <tag>', print_Log)
+    .option('-p, --package <package>', '查看apk信息 <包名>', print_packages)
+    .option('--clean <package>', '双清(缓存/数据)应用 <包名>', cleanApk)
+    .option('--stop <package>', '杀死应用应用 <包名>', stopApk)
+    .option('--input <content>', '将内容输入到edittext(不支持中文)', setInput)
+    .option('-c --cap', '截屏并保存的电脑(record/)', screencap)
+    .option('-s --screenrecord', '录制并保存的电脑(record/)', screenrecord)
     .option('--ip', '显示设备ip地址', print_IP)
     .parse(process.argv);
 
@@ -164,15 +205,3 @@ if (program.rawArgs.length <= 2) {
     console.error(0);
     program.help();
 }
-
-if (program.package && program.rawArgs.length === 3 || program.input && program.rawArgs.length === 3) {
-    console.error(1);
-    program.help();
-}
-
-
-/*run_command(AS + 'getprop ro.product.brand');
- run_command(AS + 'getprop ro.product.name');
- run_command(AS + 'getprop ro.product.model');*/
-
-//console.log(`${YELLOW} aaaaa  ${END}`);

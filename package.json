@@ -1,6 +1,6 @@
 {
   "name": "adb_command",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.",
   "main": "adb_command.js",
   "scripts": {
