@@ -32,6 +32,8 @@
 adb shell dumpsys activity activities | grep mFocusedActivity
 //
 adb shell dumpsys meminfo com.qianyilc.platform
+//统计应用的启动时间：
+adb shell am start -W 首屏Activity。
 ```
 
 ### 参考资料

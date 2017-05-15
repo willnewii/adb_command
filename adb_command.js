@@ -32,7 +32,7 @@ const run_commandA = function (command, callback) {
         // console.log(error, stdout, stderr);
         if (!error) {
             if (callback)
-                callback();
+                callback(stdout, stderr);
         }
     });
     child.on('exit', function (code) {
@@ -76,7 +76,7 @@ const select_packages = function (packagename, tip, callback) {
             rs.split('\n').forEach((item, index, array) => {
                 console.log(index + ':' + item);
             });
-            co(function *() {
+            co(function*() {
                 let line = yield prompt(tip)
                 if (callback)
                     callback(rs.split('\n')[parseInt(line)]);
@@ -108,7 +108,7 @@ const cleanApk = function (packagename) {
 }
 
 const doCleanApk = function (packagename) {
-    co(function *() {
+    co(function*() {
         let conf = yield prompt.confirm('确定要清除<' + packagename + '>的数据?(y/n)')
         if (conf) {
             run_as('pm clear ' + packagename);
@@ -127,19 +127,54 @@ const doStopApk = function (packagename) {
     run_as('am force-stop ' + packagename);
 }
 
-const print_Log = function (tag) {
-    let filename = 'log/' + new Date().format("yyyy-MM-dd-hh") + '.txt'
+const record_print_Log = function (pid) {
+    let filename = 'record/' + new Date().format("log_yyyy-MM-dd-hh") + '.txt'
     fs.appendFile(filename, '##### 记录日志:' + new Date().format("yyyy-MM-dd hh:mm:ss") + '\n');
+    fs.appendFile(filename, '##### 手机:' + run_as('getprop ro.product.model') + '\n');
+    fs.appendFile(filename, '##### 系统:' + run_as('getprop ro.build.version.release') + ',' + run_as('getprop ro.build.version.sdk') + '\n');
 
-    let log = spawn('adb', ['logcat', `${tag}:v`, '*:S']);
+    let log = spawn('adb', ['logcat', '*:D', '|', `awk '$3=${pid}'`], {shell: true});
     log.stdout.on('data', function (data) {
-        console.log(data.toString());
-        fs.appendFile(filename, data.toString());
+        //console.log(data.toString());
+        console.log(fs.appendFile(filename, data.toString()));
+        //fs.appendFile(filename, data.toString());
     });
     // 添加一个end监听器来关闭文件流
     log.stdout.on('end', function (data) {
         console.log(' downloaded to ');
     });
+}
+
+const print_Log = function (packagename) {
+
+    let rs = run_as(`ps | grep ${packagename} | awk '{print $2"\t"$9}'`).trim();
+    if (rs.length == 0) {
+        console.log('没有查到该程序');
+        return;
+    } else {
+        let array = rs.split('\n');
+
+        if (array.length == 1) {
+            let pid = array[0].split('\t')[0];
+            record_print_Log(pid);
+        } else {
+            rs.split('\n').forEach((item, index) => {
+                console.log(index + ':' + item);
+            });
+            co(function*() {
+                let line = yield prompt('请输入你要查看的应用程序编号:')
+
+                function a(line) {
+                    let pid = rs.split('\n')[parseInt(line)].split('\t')[0];
+                    console.log(pid);
+                    record_print_Log(pid);
+                }
+
+                a(line);
+                process.stdin.pause();
+            })
+        }
+    }
 }
 
 const screencap = function () {
@@ -159,7 +194,7 @@ const screenrecord = function () {
     console.log('屏幕录制中...需要停止时按ctrl+c');
     let filename = new Date().format("yyyy_MM_dd_hh_mm_ss") + '.mp4';
     let log = spawn('adb', ['shell', 'screenrecord', '/sdcard/' + filename]);
-    co(function *() {
+    co(function*() {
         let conf = yield prompt.confirm('停止录制?(y/n)')
         if (conf) {
             log.kill();
@@ -191,7 +226,7 @@ _mkdir('record');
 program
     .version(require('./package.json').version)
     .option('-i, --info', '显示设备信息', print_deviceinfo)
-    .option('-l, --log <tag>', '打印log(log/) <tag>', print_Log)
+    .option('-l, --log <tag>', '打印log(record/) <tag>', print_Log)
     .option('-p, --package <package>', '查看apk信息 <包名>', print_packages)
     .option('--clean <package>', '双清(缓存/数据)应用 <包名>', cleanApk)
     .option('--stop <package>', '杀死应用应用 <包名>', stopApk)
@@ -202,6 +237,5 @@ program
     .parse(process.argv);
 
 if (program.rawArgs.length <= 2) {
-    console.error(0);
     program.help();
 }
