@@ -59,7 +59,8 @@ const print_deviceinfo = function () {
 }
 
 const print_IP = function () {
-    console.log(run_as('ifconfig | grep Mask'));
+    //console.log(run_as('ifconfig | grep Mask'));
+    console.log(run_as('ifconfig | grep Mask | awk \'{print $2}\''));
 }
 
 const select_packages = function (packagename, tip, callback) {
@@ -133,10 +134,12 @@ const record_print_Log = function (pid) {
     fs.appendFile(filename, '##### 手机:' + run_as('getprop ro.product.model') + '\n');
     fs.appendFile(filename, '##### 系统:' + run_as('getprop ro.build.version.release') + ',' + run_as('getprop ro.build.version.sdk') + '\n');
 
-    let log = spawn('adb', ['logcat', '*:D', '|', `awk '$3=${pid}'`], {shell: true});
+    let log = spawn('adb', ['logcat', '*:D', '|', `awk '$3=${pid}'`], {
+        shell: true
+    });
     log.stdout.on('data', function (data) {
-        //console.log(data.toString());
-        console.log(fs.appendFile(filename, data.toString()));
+        console.log(data.toString());
+        fs.appendFile(filename, data.toString());
         //fs.appendFile(filename, data.toString());
     });
     // 添加一个end监听器来关闭文件流
