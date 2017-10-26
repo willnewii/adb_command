@@ -1,3 +1,8 @@
+### command.js
+- kill progress by port (一条命令执行执行查询,并杀死进程.)  省的要先查询,再输入相应的端口号.
+
+
+
 根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.
 
 ### 功能
@@ -34,6 +39,8 @@ adb shell dumpsys activity activities | grep mFocusedActivity
 adb shell dumpsys meminfo com.qianyilc.platform
 //统计应用的启动时间：
 adb shell am start -W 首屏Activity。
+//查看所有(6.0)危险权限
+adb shell pm list permissions -d -g
 ```
 
 ### 参考资料
