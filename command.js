@@ -1,14 +1,23 @@
 const prompt = require('prompt');
-const colors = require("colors");
+//const colors = require("colors");
+const colors = require("chalk");
 const program = require('commander');
 
 const execSync = require('child_process').execSync
 
+const highlightBG = colors.bgBlue;
+const highlight = colors.bold.blue;
+
 prompt.message = '';
-prompt.delimiter = colors.green(prompt.delimiter);
+prompt.delimiter = highlight(prompt.delimiter);
 
 const run_command = function (command) {
-  let result = execSync(command);
+  let result;
+  try {
+    result = execSync(command);
+  } catch (ex) {
+    result = '';
+  }
   return result.toString().trim();
 }
 
@@ -17,7 +26,7 @@ async function getInput(tip) {
   let schema = {
     properties: {
       name: {
-        description: colors.bgBlue(tip),
+        description: highlightBG(tip),
         required: true
       }
     }
@@ -41,17 +50,23 @@ async function getInput(tip) {
  * 根据匹配端口号 kill相应进程
  */
 async function doKillByPort(_port) {
+  //lsof -i -n -P | grep :80
   let command = 'lsof -i tcp';
   if (_port) {
     command = command + ':' + _port
   }
 
   let result = run_command(command);
+  if (!result) {
+    console.log(highlightBG('没有查到匹配的进程 执行命令:' + command));
+    return ;
+  }
+
   let results = result.split('\n');
 
   results.forEach((item, index) => {
     if (index > 0) {
-      console.log(colors.bold.blue(index) + '  :  ' + item);
+      console.log(highlight(index) + '  :  ' + item);
     }
   })
   let index = await getInput('请输入你要关闭的进程编号');

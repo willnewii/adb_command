@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/willnewii/adb_command#readme",
   "dependencies": {
+    "chalk": "^2.3.0",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "colors": "^1.1.2",
