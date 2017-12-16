@@ -8,6 +8,9 @@ const execSync = require('child_process').execSync
 const highlightBG = colors.bgBlue;
 const highlight = colors.bold.blue;
 
+//import mortgage from './js/mortgage';
+const mortgage = require('./js/mortgage');
+
 prompt.message = '';
 prompt.delimiter = highlight(prompt.delimiter);
 
@@ -59,7 +62,7 @@ async function doKillByPort(_port) {
   let result = run_command(command);
   if (!result) {
     console.log(highlightBG('没有查到匹配的进程 执行命令:' + command));
-    return ;
+    return;
   }
 
   let results = result.split('\n');
@@ -77,6 +80,14 @@ async function doKillByPort(_port) {
   console.log('finish');
 }
 
+function doMortgage() {
+  let m = new mortgage();
+
+  let result = m.print();
+  console.log(result);
+  run_command('say ' + result.replace(/\n/g, '') + '啦啦啦啦啦啦啦');
+}
+
 function doTest() {
   console.log('test');
 }
@@ -85,6 +96,7 @@ program
   .version(require('./package.json').version)
   .option('-t, --test', '测试', doTest)
   .option('-p, --port <port>', 'kill相应进程', doKillByPort)
+  .option('-f, --fangdai', '房贷计算器', doMortgage)
   .parse(process.argv);
 
 if (program.rawArgs.length <= 2) {
