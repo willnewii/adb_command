@@ -85,7 +85,7 @@ function doMortgage() {
 
   let result = m.print();
   console.log(result);
-  run_command('say ' + result.replace(/\n/g, '') + '啦啦啦啦啦啦啦');
+  run_command('say ' + result.replace(/\n/g, '') + '    啦啦啦啦啦啦啦');
 }
 
 function doTest() {

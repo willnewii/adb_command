@@ -36,7 +36,7 @@ class mortgage {
     let totalSum = this.calculateTotalSum();
 
     return `第${currentMonth}期应还款:${mortgage.handleNumPrint(monthInterest + this.principal)}元 ` + '\n' +
-    `已还款:${mortgage.handleNumPrint(this.calculateRepayment(currentMonth - 1))}元 ` + '\n' +
+    //`已还款:${mortgage.handleNumPrint(this.calculateRepayment(currentMonth - 1))}元 ` + '\n' +
     `待还款:${mortgage.handleNumPrint((totalSum - this.calculateRepayment(currentMonth - 1)))}元 ` + '\n' +
     `坚持一下你还有${mortgage.handleNumPrint((this.totalmonth-currentMonth)/12)}年就能还完啦~`
   }
