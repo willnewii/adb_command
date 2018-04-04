@@ -76,7 +76,7 @@ async function doKillByPort(_port) {
   let reg = /\S+/g; //匹配非空白符
   let port = results[parseInt(index)].match(reg)[1]
 
-  run_command('kill ' + port)
+  run_command('kill -9 ' + port)
   console.log('finish');
 }
 
@@ -85,7 +85,7 @@ function doMortgage() {
 
   let result = m.print();
   console.log(result);
-  run_command('say ' + result.replace(/\n/g, '') + '    啦啦啦啦啦啦啦');
+  //run_command('say ' + result.replace(/\n/g, '') + '    啦啦啦啦啦啦啦');
 }
 
 function doTest() {
