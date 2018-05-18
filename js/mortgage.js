@@ -42,7 +42,7 @@ class mortgage {
   }
 
   /**
-   * 已换金额
+   * 已还金额
    */
   calculateRepayment(numMonth) {
     /*        let total = 0;
