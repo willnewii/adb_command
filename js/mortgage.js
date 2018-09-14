@@ -1,5 +1,5 @@
 const TOTAL = 340000;
-const TOTALMONTH = 360;
+const TOTALMONTH = 30 * 12;
 const RATE = 4.655 / 100;
 
 const startYear = 2016;
@@ -36,10 +36,16 @@ class mortgage {
         let totalSum = this.calculateTotalSum();
 
         return {
-          month :currentMonth ,
-          yh:handleNumPrint(monthInterest + this.principal),
-          dh:handleNumPrint((totalSum - this.calculateRepayment(currentMonth - 1))),
-          year:handleNumPrint((this.totalmonth-currentMonth)/12)
+            //  当前期数
+            month: currentMonth,
+            //  当月应还
+            dyyh: handleNumPrint(monthInterest + this.principal),
+            //  待还总额
+            dh: handleNumPrint((totalSum - this.calculateRepayment(currentMonth - 1))),
+            //  剩余本金
+            sybj: handleNumPrint(this.total - this.principal * (currentMonth - 1)),
+            //  剩余年
+            year: handleNumPrint((this.totalmonth - currentMonth) / 12)
         }
 
         /* return `第${currentMonth}期应还款:${handleNumPrint(monthInterest + this.principal)}元 ` + '\n\n' +

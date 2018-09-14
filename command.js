@@ -85,8 +85,9 @@ function doMortgage() {
 
     let result = m.print();
     // console.log(result);
-    console.log(`第${highlight(result.month)}期应还款: ${highlight(result.yh)} 元
+    console.log(`第${highlight(result.month)}期应还款: ${highlight(result.dyyh)} 元
 
+剩余本金: ${highlight(result.sybj)} 元
 待还款: ${highlight(result.dh)} 元
 
 坚持一下你还有 ${highlight(result.year)} 年就能还完啦~`);
