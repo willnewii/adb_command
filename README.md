@@ -1,3 +1,9 @@
+# will command
+- -d 倒计时
+- -p 关闭指定进程
+- -f 房贷计算器
+
+
 ### command.js
 - kill progress by port (一条命令执行执行查询,并杀死进程.)  省的要先查询,再输入相应的端口号.
 
@@ -49,3 +55,8 @@ adb shell pm list permissions -d -g
 - [Python 命令行输出的颜色设置 ](http://blog.chinaunix.net/uid-27714502-id-4110758.html)
 - [Python_cmd的各种实现方法及优劣（subprocess.Popen, os.system和commands.getstatusoutput）](http://blog.csdn.net/menglei8625/article/details/7494094)
 - [工具手册 awk sed grep](http://www.itshouce.com.cn/linux/linux-grep.html)
+
+
+
+
+npm link

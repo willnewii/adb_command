@@ -1,27 +1,33 @@
 {
-  "name": "adb_command",
-  "version": "0.0.3",
-  "description": "根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.",
-  "main": "adb_command.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/willnewii/adb_command.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/willnewii/adb_command/issues"
-  },
-  "homepage": "https://github.com/willnewii/adb_command#readme",
-  "dependencies": {
-    "chalk": "^2.3.0",
-    "co": "^4.6.0",
-    "co-prompt": "^1.0.0",
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "prompt": "^1.0.0"
-  }
+    "name": "adb_command",
+    "version": "0.0.3",
+    "description": "根据<[🍭 ADB 用法大全](https://github.com/mzlogin/awesome-adb)>这篇文章,把一些常用的命令做了封装.",
+    "main": "adb_command.js",
+    "bin": {
+        "will": "./command.js"
+    },
+    "scripts": {
+        "will": "node ./command.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/willnewii/adb_command.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/willnewii/adb_command/issues"
+    },
+    "homepage": "https://github.com/willnewii/adb_command#readme",
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "cli-progress": "^3.1.0",
+        "co": "^4.6.0",
+        "co-prompt": "^1.0.0",
+        "colors": "^1.4.0",
+        "commander": "^2.20.0",
+        "dayjs": "^1.8.16",
+        "prompt": "^1.0.0"
+    }
 }
