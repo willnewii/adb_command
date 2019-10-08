@@ -108,12 +108,17 @@ function doMortgage() {
  * 倒计时
  */
 async function doCountDown() {
-    let time = await getInput('请输入倒计时时间(HH:mm)');
+    let time = await getInput('请输入倒计时时间(HH:mm / XXXs)');
     const SEPARATOR = ':';
 
     let values = time.split(SEPARATOR);
-    if (values.length === 0) {
-        console.log('时间格式错误.0');
+    if (values.length === 1) {
+        if (time.toLocaleLowerCase().indexOf('s') !== -1) {
+            let value = parseInt(time);
+            _doCountDown(value);
+        } else {
+            console.log('时间格式错误.0');
+        }
     } else if (values.length === 2) {
         let current = dayjs();
         let h = current.get('hour');
@@ -121,24 +126,27 @@ async function doCountDown() {
         let s = current.get('second');
 
         let total = (values[0] - h) * 3600 + (values[1] - m) * 60 - s;
-        // let total = 2;
-        if (total > 0) {
-            cliProgress.start(total, 0);
-            let intervalID = setInterval(() => {
-                if (cliProgress.value >= cliProgress.total) {
-                    clearInterval(intervalID);
-                    console.log('\n👉  时间到啦  👈');
-                    run_command(`play ${config.ringing}`);
-                } else {
-                    cliProgress.increment();
-                }
-            }, 1000);
-        } else {
-            console.log('时间格式错误.1');
-        }
+        _doCountDown(total);
     } else {
         //未处理
         console.log('时间格式未处理');
+    }
+}
+
+function _doCountDown(total) {
+    if (total > 0) {
+        cliProgress.start(total, 0);
+        let intervalID = setInterval(() => {
+            if (cliProgress.value >= cliProgress.total) {
+                clearInterval(intervalID);
+                console.log('\n👉  时间到啦  👈');
+                run_command(`play ${config.ringing}`);
+            } else {
+                cliProgress.increment();
+            }
+        }, 1000);
+    } else {
+        console.log('时间格式错误.1');
     }
 }
 
